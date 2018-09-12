@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="../../css/font.css">
+    <link rel="stylesheet" href="../../css/xadmin.css">
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../js/xadmin.js"></script>
+</head>
+
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a>
+            <cite>数据字典</cite></a>
+      </span>
+</div>
+<div class="x-body">
+    <blockquote class="layui-elem-quote">操作数据字典</blockquote>
+    <xblock>
+        <button class="layui-btn" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <button class="layui-btn" onclick="dicAdd('添加根节点','cate-edit.html')"><i class="layui-icon">&#xe61f;</i>添加根节点</button>
+        <button class="layui-btn" onclick="excelImport()"><i class="layui-icon">&#xe681;</i>Execl批量导入</button>
+        <button class="layui-btn" onclick="loadData(null, true)"><i class="layui-icon">&#xe669;</i>刷新</button>
+        <button class="layui-btn" onclick="dicSearch()"><i class="layui-icon">&#xe615;</i>字典搜索</button>
+
+        <span class="x-right" style="line-height:40px">共有数据：<span id="dic-count">88</span> 条</span>
+    </xblock>
+    <table class="layui-table layui-form">
+        <thead>
+        <tr>
+            <th width="20">
+                <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">
+                    &#xe605;</i></div>
+            </th>
+            <th width="50">ID</th>
+            <th>字典名称</th>
+            <th width="50">语言类型</th>
+            <th width="150">code代码</th>
+            <th width="100">类型</th>
+            <th width="220">操作</th>
+        </thead>
+        <tbody class="x-cate" id="x-cate"></tbody>
+    </table>
+</div>
+
+
+<script>
+    layui.use(['form'], function () {
+        form = layui.form;
+        loadData();
+    });
+
+    function loadData(params, isRef) {
+        isRef = isRef || false;
+        $("tbody#x-cate").html("");
+        $.ajax({
+            url: config.urlBase + "/all",
+            data: params || undefined,
+            dataType: "json",
+            success: function (res) {
+                if(params){
+                    searchAddNode(res, 0, 1);
+                    $(document).off("click", ".x-show");
+                    $('.x-show').html('&#xe65b;');
+                }else{
+                    addNode(res, 0, 1);
+                    if(isRef == false){
+                        bindClick();
+                    }
+                }
+            },
+            error: function () {
+            }
+        });
+
+        $.ajax({
+            url: config.urlBase + "/count",
+            dataType: "json",
+            success: function (res) {
+                $('#dic-count').html(res);
+            }
+        });
+
+    }
+
+    function searchAddNode(obj, fid, level) {
+        if(Array.isArray(obj)){
+            obj.forEach(function (item) {
+                let node = getNode(item.dictionary, fid, level);
+                $("tbody#x-cate").append(node);
+                if(item.children){
+                    searchAddNode(item.children, item.dictionary.id, (level+2));
+                }
+            });
+        }else{
+            let node = getNode(obj.dictionary, fid, level);
+            $("tbody#x-cate").append(node);
+            if(obj.children){
+                searchAddNode(obj.children, obj.dictionary.id, (level+2));
+            }
+        }
+    }
+
+
+    function excelImport(){
+        let w=28;
+        let h=12;
+
+        top.editData = {};
+        layer.open({
+            type: 2,
+            area: [w+'rem', h +'rem'],
+            fix: false, //不固定
+            maxmin: true,
+            shadeClose: true,
+            shade:0.4,
+            title: 'Execl批量导入',
+            content: 'execl-import.html'
+            ,btn: ['确认导入', '取消']
+            ,yes: function(index, layero){
+                top.editData.submit();
+                top.editData.submitBack = function(res){
+                    layer.close(index);
+                    if(res.header.status == 1000){
+                        layer.msg("导入成功", {icon: 6});
+                    }else{
+                        layer.msg("导入失败", {icon: 2});
+                    }
+
+                };
+            }
+            ,btn2: function(index, layero){
+                layer.close(index);
+            }
+        });
+    }
+
+    function dicSearch(){
+        let w=28;
+        let h=19;
+
+        top.editData = {};
+        layer.open({
+            type: 2,
+            area: [w+'rem', h +'rem'],
+            fix: false, //不固定
+            maxmin: true,
+            shadeClose: true,
+            shade:0.4,
+            title: '字典搜索',
+            content: 'cate-search.html'
+            ,btn: ['搜索', '取消'],
+            success : function (layero, index) {
+                top.editData.submitBack = function () {
+                    layer.close(index);
+                };
+            }
+            ,yes: function(){
+                top.editData.submit();
+            }
+            ,btn2: function(index){
+                layer.close(index);
+            }
+        });
+    }
+
+
+    function getNode(item, fid, level) {
+        if(!item){
+            return false;
+        }
+        return '        <tr cate-id=\'' + item['id'] + '\' fid=\'' + fid + '\' level=\'' + level + '\' isLoad=\'false\'>\n' +
+            '            <td>\n' +
+            '                <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id=\'2\'><i class="layui-icon">\n' +
+            '                    &#xe605;</i></div>\n' +
+            '            </td>\n' +
+            '            <td>' + item['id'] + '</td>\n' +
+            '            <td style=\'padding-left: ' + level + 'rem\'>\n' +
+            '                <i class="layui-icon x-show" status=\'true\'>&#xe623;</i>\n' +
+            '                ' + item['name'] + '\n' +
+            '            </td>\n' +
+            '            <td>' + item['langType'] + '</td>\n' +
+            '            <td>' + item['code'] + '</td>\n' +
+            '            <td>' + item['type'] + '</td>\n' +
+            '            <td class="td-manage">\n' +
+            '                <button class="layui-btn layui-btn layui-btn-xs" onclick="dicEdit(\'编辑\',\'cate-edit.html\', \''+item['id']+'\', this)"><i\n' +
+            '                        class="layui-icon">&#xe642;</i>编辑\n' +
+            '                </button>\n' +
+            '                <button class="layui-btn layui-btn-warm layui-btn-xs" onclick="dicAdd(\'添加子栏目\',\'cate-edit.html\', \''+item['id']+'\', this)"><i\n' +
+            '                        class="layui-icon">&#xe642;</i>添加子栏目\n' +
+            '                </button>\n' +
+            '                <button class="layui-btn-danger layui-btn layui-btn-xs" onclick="member_del(this,\'要删除的id\')"\n' +
+            '                        href="javascript:;"><i class="layui-icon">&#xe640;</i>删除\n' +
+            '                </button>\n' +
+            '            </td>\n' +
+            '        </tr>';
+    }
+
+    function addNode(obj, fid, level, tr) {
+        obj.forEach(function (item) {
+            let node = getNode(item, fid, level);
+            tr ? tr.after(node) : $("tbody#x-cate").append(node);
+        });
+    }
+
+
+    function bindClick() {
+        $(document).on("click", ".x-show", function () {
+            if ($(this).attr('status') == 'true') {
+                $(this).html('&#xe625;');
+                $(this).attr('status', 'false');
+                let tr = $(this).parents('tr');
+                let cateId = tr.attr('cate-id');
+                let isLoad = tr.attr('isLoad');
+                let level = parseInt(tr.attr('level'));
+                if (isLoad == 'false') {
+                    tr.attr('isLoad', 'true');
+                    $.ajax({
+                        url: config.urlBase + "/all",
+                        data: {id: cateId},
+                        dataType: "json",
+                        success: function (res) {
+                            addNode(res, cateId, (level + 2), tr);
+                        },
+                        error: function () {
+                        }
+                    });
+                }
+
+                $("tbody tr[fid=" + cateId + "]").show();
+            } else {
+                cateIds = [];
+                $(this).html('&#xe623;');
+                $(this).attr('status', 'true');
+                let cateId = $(this).parents('tr').attr('cate-id');
+                getCateId(cateId);
+                for (let i in cateIds) {
+                    $("tbody tr[cate-id=" + cateIds[i] + "]").hide().find('.x-show').html('&#xe623;').attr('status', 'true');
+                }
+            }
+        });
+
+        $(document).on("click", ".layui-form-checkbox", function () {
+            if($(this).hasClass('layui-form-checked')){
+                $(this).removeClass('layui-form-checked');
+                if($(this).hasClass('header')){
+                    $(".layui-form-checkbox").removeClass('layui-form-checked');
+                }
+            }else{
+                $(this).addClass('layui-form-checked');
+                if($(this).hasClass('header')){
+                    $(".layui-form-checkbox").addClass('layui-form-checked');
+                }
+            }
+        });
+    }
+
+
+    function member_del(obj, id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            let tr = $(obj).parents("tr");
+            let id = tr.attr('cate-id');
+            $.ajax({
+                url: config.urlBase + "/del",
+                data: {id: id},
+                dataType: "json",
+                success: function (res) {
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!', {icon: 1, time: 1000});
+                },
+                error: function () {
+                }
+            });
+        });
+    }
+
+
+    function delAll() {
+        let obj = $(".layui-form-checked").not('.header');
+        if(obj.length == 0){
+            layer.msg('请勾选需要删除的节点', {icon: 2});
+            return false;
+        }
+        let arr = '';
+        obj.each(function(index, el) {
+            let tr = $(el).parents("tr");
+            arr += tr.attr('cate-id') + ',';
+        });
+
+        arr = arr.substring(0, arr.length - 1);
+        layer.confirm('确认要删除吗？' + arr, function (index) {
+            $.ajax({
+                url: config.urlBase + "/delBatch",
+                data: {id: arr},
+                dataType: "json",
+                success: function (res) {
+                    layer.msg('删除成功', {icon: 1});
+                    $(".layui-form-checked").not('.header').parents('tr').remove();
+                },
+                error: function () {
+                }
+            });
+        });
+    }
+
+
+    function dicEdit(title,url,id,td){
+        let w=27;
+        let h=22;
+
+        top.editData = {id: id};
+        layer.open({
+            type: 2,
+            area: [w+'rem', h +'rem'],
+            fix: false, //不固定
+            maxmin: true,
+            shadeClose: true,
+            shade:0.4,
+            title: title,
+            content: url
+            ,btn: ['确认修改', '取消']
+            ,yes: function(index, layero){
+                top.editData.submit();
+                top.editData.submitBack = function(item){
+                    let tr = $(td).parents("tr");
+                    let level = parseInt(tr.attr('level'));
+                    let node = '     <td>\n' +
+                        '                <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id=\'2\'><i class="layui-icon">\n' +
+                        '                    &#xe605;</i></div>\n' +
+                        '            </td>\n' +
+                        '            <td>' + item['id'] + '</td>\n' +
+                        '            <td style=\'padding-left: ' + level + 'rem\'>\n' +
+                        '                <i class="layui-icon x-show" status=\'true\'>&#xe623;</i>\n' +
+                        '                ' + item['name'] + '\n' +
+                        '            </td>\n' +
+                        '            <td>' + item['langType'] + '</td>\n' +
+                        '            <td>' + item['code'] + '</td>\n' +
+                        '            <td>' + item['type'] + '</td>\n' +
+                        '            <td class="td-manage">\n' +
+                        '                <button class="layui-btn layui-btn layui-btn-xs" onclick="dicEdit(\'编辑\',\'cate-edit.html\', \''+item['id']+'\', this)"><i\n' +
+                        '                        class="layui-icon">&#xe642;</i>编辑\n' +
+                        '                </button>\n' +
+                        '                <button class="layui-btn layui-btn-warm layui-btn-xs" onclick="dicAdd(\'添加子栏目\',\'cate-edit.html\', \''+item['id']+'\', this)"><i\n' +
+                        '                        class="layui-icon">&#xe642;</i>添加子栏目\n' +
+                        '                </button>\n' +
+                        '                <button class="layui-btn-danger layui-btn layui-btn-xs" onclick="member_del(this,\'要删除的id\')"\n' +
+                        '                        href="javascript:;"><i class="layui-icon">&#xe640;</i>删除\n' +
+                        '                </button>\n' +
+                        '            </td>';
+                    tr.html(node);
+                    layer.close(index);
+                    layer.msg("修改成功", {icon: 6});
+                };
+            }
+            ,btn2: function(index, layero){
+                layer.close(index);
+            }
+        });
+    }
+
+    function dicAdd(title,url,pId,td) {
+        let w=27;
+        let h=22;
+        td ? top.editData = {pId: pId} : top.editData = {pId: 0};
+        layer.open({
+            type: 2,
+            area: [w+'rem', h +'rem'],
+            fix: false, //不固定
+            maxmin: true,
+            shadeClose: true,
+            shade:0.4,
+            title: title,
+            content: url
+            ,btn: ['确认添加', '取消']
+            ,yes: function(index, layero){
+                top.editData.submit();
+                top.editData.submitBack = function(item){
+                    if(td){
+                        let tr = $(td).parents("tr");
+                        let level = parseInt(tr.attr('level')) + 2;
+                        let node = getNode(item, pId, level);
+                        tr.after(node);
+                    }else{
+                        let node = getNode(item, 0, 1);
+                        $("tbody#x-cate").append(node);
+                    }
+                    layer.close(index);
+                    layer.msg("添加成功", {icon: 6});
+                };
+            }
+            ,btn2: function(index, layero){
+                layer.close(index);
+            }
+        });
+    }
+</script>
+</body>
+
+</html>

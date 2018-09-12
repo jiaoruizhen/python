@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="x-body">
+    <!--喂食器的详情-->
+    <div class="layui-form" id="feeder-form" lay-filter="feeder-form" style="display: none;">
+        <div class="layui-form-item">
+            <label for="feederMac" class="layui-form-label">
+                <span class="x-red">*</span>Mac:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="feederMac" name="bluetoothMac" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="feederUuid" class="layui-form-label">
+                <span class="x-red">*</span>Uuid:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="feederUuid" name="bluetoothUuid" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="feederdevName" class="layui-form-label">
+                <span class="x-red">*</span>devName:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="feederdevName" name="devName" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="feederdevUid" class="layui-form-label">
+                <span class="x-red">*</span>devUid:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="feederdevUid" name="devUid" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="feederfwVer" class="layui-form-label">
+                <span class="x-red">*</span>fwVer:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="feederfwVer" name="fwVer" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="feederwifiMac" class="layui-form-label">
+                <span class="x-red">*</span>wifiMac:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="feederwifiMac" name="wifiMac" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="feederwxBlueId" class="layui-form-label">
+                <span class="x-red">*</span>wxBlueId:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="feederwxBlueId" name="wxBlueId" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+
+    <!--机器狗的详情-->
+    <div class="layui-form" id="robot-form" lay-filter="robot-form" style="display: none;">
+        <div class="layui-form-item">
+            <label for="robotMac" class="layui-form-label">
+                <span class="x-red">*</span>Mac:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="robotMac" name="bluetoothMac" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="robotUuid" class="layui-form-label">
+                <span class="x-red">*</span>Uuid:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="robotUuid" name="bluetoothUuid" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="robotUid" class="layui-form-label">
+                <span class="x-red">*</span>devUid:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="robotUid" name="devUid" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="robotfwVer" class="layui-form-label">
+                <span class="x-red">*</span>fwVer:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="robotfwVer" name="fwVer" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="robotWifiMac" class="layui-form-label">
+                <span class="x-red">*</span>wifiMac:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="robotWifiMac" name="wifiMac" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="robotWxBlueId" class="layui-form-label">
+                <span class="x-red">*</span>wxBlueId:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="robotWxBlueId" name="wxBlueId" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+
+    <!--吊牌的详情-->
+    <div class="layui-form" id="tag-form" lay-filter="tag-form" style="display: none;">
+        <div class="layui-form-item">
+            <label for="tagMac" class="layui-form-label">
+                <span class="x-red">*</span>Mac:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="tagMac" name="bluetoothMac" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="tagUuid" class="layui-form-label">
+                <span class="x-red">*</span>Uuid:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="tagUuid" name="bluetoothUuid" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="tagdevName" class="layui-form-label">
+                <span class="x-red">*</span>devName:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="tagdevName" name="devName" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="tagdevUid" class="layui-form-label">
+                <span class="x-red">*</span>devUid:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="tagdevUid" name="devUid" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="tagfwVer" class="layui-form-label">
+                <span class="x-red">*</span>fwVer:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="tagfwVer" name="fwVer" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="tagwifiMac" class="layui-form-label">
+                <span class="x-red">*</span>wifiMac:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="tagwifiMac" name="wifiMac" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="tagwxBlueId" class="layui-form-label">
+                <span class="x-red">*</span>wxBlueId:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="tagwxBlueId" name="wxBlueId" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+
+    <!--项圈的详情-->
+    <div class="layui-form" id="necklace-form" lay-filter="necklace-form" style="display: none;">
+        <div class="layui-form-item">
+            <label for="necklaceMac" class="layui-form-label">
+                <span class="x-red">*</span>Mac:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="necklaceMac" name="bluetoothMac" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="necklaceUuid" class="layui-form-label">
+                <span class="x-red">*</span>Uuid:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="necklaceUuid" name="bluetoothUuid" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="necklacedevName" class="layui-form-label">
+                <span class="x-red">*</span>devName:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="necklacedevName" name="devName" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="necklacedevUid" class="layui-form-label">
+                <span class="x-red">*</span>devUid:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="necklacedevUid" name="devUid" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="necklacefwVer" class="layui-form-label">
+                <span class="x-red">*</span>fwVer:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="necklacefwVer" name="fwVer" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="necklacewifiMac" class="layui-form-label">
+                <span class="x-red">*</span>wifiMac:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="necklacewifiMac" name="wifiMac" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="necklacewxBlueId" class="layui-form-label">
+                <span class="x-red">*</span>wxBlueId:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="necklacewxBlueId" name="wxBlueId" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'layer'], function () {
+        let fm = layui.form
+            , layer = layui.layer
+            , index = layer.load(2);
+
+        let obj = top.editData;
+        $.ajax({
+            url: config.urlBase + "/device/getById",
+            data: {id: obj.id},
+            dataType: "json",
+            success: function (res) {
+                if (res.header.status == 1000) {
+                    let o = res.data
+                        , fmName;
+
+                    if (obj.type == 'FEEDER') {
+                        fmName = 'feeder-form';
+                    } else if (obj.type == 'ROBOT') {
+                        fmName = 'robot-form';
+                    } else if (obj.type == 'TAG') {
+                        fmName = 'tag-form';
+                    } else if (obj.type == 'NECKLACE') {
+                        fmName = 'necklace-form';
+                    } else if (obj.type == 'DISPENSER') {
+                        fmName = 'dispenser-form';
+                    }
+                    fm.val(fmName, o);
+                    $('#' + fmName).show();
+                    layer.close(index);
+                }
+            },
+            error: function () {
+                layer.close(index);
+            }
+        });
+    });
+</script>
+</body>
+
+</html>

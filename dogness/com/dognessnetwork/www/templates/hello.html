@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>web前端基础HTML+CSS</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/test.css' %}" />
+    <script src="{% static 'js/test.js' %}"></script>
+</head>
+
+
+<body>
+<h1>CSS background-color演示</h1>
+<div>该文本插入在div元素中
+<p>自己的颜色背景</p>
+    <p class="ex">ex的段落</p>
+</div>
+<p>无序列表实例</p>
+<ul class="b">
+    <li class="book">book</li>
+    <li class="computer">computer</li>
+    <li>tea</li>
+    <li>Coca</li>
+</ul>
+<script>
+    test()
+</script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="x-body">
+    <div class="layui-form" lay-filter="layui-form">
+        <div class="layui-form-item">
+            <label for="id" class="layui-form-label">
+                <span class="x-red">*</span>id:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="id" name="id" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="iccid" class="layui-form-label">
+                <span class="x-red">*</span>iccid:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="iccid" name="iccid" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="status" class="layui-form-label">
+                <span class="x-red">*</span>status:
+            </label>
+            <div class="layui-input-inline">
+                <select name="status" id="status">
+                    <option value=""></option>
+                    <option value="1">测试期</option>
+                    <option value="2">沉默期</option>
+                    <option value="3">库存期</option>
+                    <option value="4">正使用</option>
+                    <option value="5">停机</option>
+                    <option value="6">预约销户</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="openTime" class="layui-form-label">
+                <span class="x-red">*</span>openTime:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="openTime" name="openTime" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="statusTime" class="layui-form-label">
+                <span class="x-red">*</span>statusTime:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="statusTime" name="statusTime" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-form" lay-filter="form-cardOperInfo">
+        <div class="layui-form-item">
+            <label for="meals" class="layui-form-label">
+                <span class="x-red">*</span>套餐:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="meals" name="meals" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="flow" class="layui-form-label">
+                <span class="x-red">*</span>套餐流量(KB):
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="flow" name="flow" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="activationdate" class="layui-form-label">
+                <span class="x-red">*</span>开卡日期:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="activationdate" name="activationdate" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="testenddate" class="layui-form-label">
+                <span class="x-red">*</span>测试截止期:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="testenddate" name="testenddate" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="silenceenddate" class="layui-form-label">
+                <span class="x-red">*</span>沉默截止期:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="silenceenddate" name="silenceenddate" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="billingcycle" class="layui-form-label">
+                <span class="x-red">*</span>计费周期(月):
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="billingcycle" name="billingcycle" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="billingdate" class="layui-form-label">
+                <span class="x-red">*</span>套餐生效日期:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="billingdate" name="billingdate" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="billingenddate" class="layui-form-label">
+                <span class="x-red">*</span>套餐失效日期:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="billingenddate" name="billingenddate" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="paytype" class="layui-form-label">
+                <span class="x-red">*</span>支付方式:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="paytype" name="paytype" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['form','layer'], function(){
+        let fm = layui.form
+            , layer = layui.layer;
+
+        let obj = top.editData;
+        if(obj.id){
+            let index = layer.load(2);
+            $.ajax({
+                url: config.urlBase + "/sim/getById",
+                data: {id: obj.id},
+                dataType: "json",
+                success: function (res) {
+                    if(res.header.status == 1000){
+                        let o = res.data;
+                        fm.val('layui-form', o.info);
+                        fm.val('form-cardOperInfo', o.cardOperInfo);
+                        layer.close(index);
+                    }
+                },
+                error: function () {
+                    layer.close(index);
+                }
+            });
+        }
+    });
+</script>
+</body>
+
+</html>

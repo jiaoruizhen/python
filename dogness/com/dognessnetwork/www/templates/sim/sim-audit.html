@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>layui在线调试</title>
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js?v=1"></script>
+</head>
+<style>
+    body {
+        width: auto;
+        min-height: auto;
+        padding: 1rem;
+    }
+</style>
+<body>
+<form class="layui-form" id="layui-fm">
+    <div class="layui-form-item layui-border-bottom">
+        <div class="layui-inline">
+            <input type="text" name="imei" placeholder="请输入imei" autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-inline">
+            <select name="status" id="status">
+                <option value="">审核状态</option>
+                <option value="1">运营经理审核</option>
+                <option value="2">总经办审核</option>
+                <option value="3">已通过</option>
+                <option value="4">未通过</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <button class="layui-btn" lay-submit lay-filter="sim-menu" data-event="audit-batch">
+                <i class="layui-icon">&#xe60a;</i>批量审批
+            </button>
+        </div>
+        <div class="layui-inline">
+            <button class="layui-btn" lay-submit data-event="clear" lay-filter="sim-menu">
+                <i class="layui-icon layui-icon-delete"></i>清除搜索
+            </button>
+        </div>
+        <div class="layui-inline">
+            <button class="layui-btn" lay-submit lay-filter="sim-menu">
+                <i class="layui-icon layui-icon-search"></i>搜索
+            </button>
+        </div>
+    </div>
+</form>
+
+<table class="layui-hide" id="audit-table" lay-filter="audit-table"></table>
+
+<script type="text/html" id="barDemo">
+    {{#  if(d.auditStatus == 4){ }}
+    <a class="layui-btn layui-btn-xs" style="background-color: #c2c2c2">已被驳回审批</a>
+    {{#  } else if(d.auditStatus == 3){ }}
+    <a class="layui-btn layui-btn-xs" style="background-color: #5FB878">已通过</a>
+    {{#  } else {  }}
+    <a class="layui-btn layui-btn-xs" lay-event="renew">审核</a>
+    {{#  } }}
+</script>
+
+<!--//评审状态  1、运营经理审核  2、总经办审核    3、已通过   4、未通过-->
+<script type="text/html" id="auditStatusTpl">
+    {{#  if(d.auditStatus == 1){ }}
+    <span>运营经理审核</span>
+    {{#  } else if(d.auditStatus == 2){ }}
+    <span>总经办审核</span>
+    {{#  } else if(d.auditStatus == 3){ }}
+    <span style="color: #5FB878;">已通过</span>
+    {{#  } else if(d.auditStatus == 4){ }}
+    <span style="color: red;">未通过</span>
+    {{#  } }}
+</script>
+
+<!--1测试期、2沉默期、3库存期、4正使用、5停机、6预约销户-->
+<script type="text/html" id="statusTpl">
+    {{#  if(d.status == 1){ }}
+    <span>测试期</span>
+    {{#  } else if(d.status == 2){ }}
+    <span>沉默期</span>
+    {{#  } else if(d.status == 3){ }}
+    <span>库存期</span>
+    {{#  } else if(d.status == 4){ }}
+    <span>正使用</span>
+    {{#  } else if(d.status == 5){ }}
+    <span>停机</span>
+    {{#  } else if(d.status == 6){ }}
+    <span>预约销户</span>
+    {{#  }  }}
+</script>
+
+<!--1奥一移动、2宝安移动-->
+<script type="text/html" id="simTypeTpl">
+    {{#  if(d.operator == 1){ }}
+    <span>奥一移动</span>
+    {{#  } else if(d.operator == 2){ }}
+    <span>宝安移动</span>
+    {{#  }  }}
+</script>
+
+<script type="text/html" id="expectRenewAtTpl">
+    {{#  if(!d.expectRenewAt){ }}
+    <span>\</span>
+    {{#  } else { }}
+    <span>{{ d.expectRenewAt }}</span>
+    {{#  }  }}
+</script>
+
+<script>
+    layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element'], function () {
+        let laypage = layui.laypage //分页
+            , layer = layui.layer //弹层
+            , form = layui.form
+            , table = layui.table;
+
+        table.render({
+            elem: '#audit-table'
+            , url: '/sim/audit/list' //数据接口
+            , page: true //开启分页
+            , cols: [[ //表头
+                {type: 'checkbox'}
+                , {field: 'id', title: 'ID', sort: true}
+                , {field: 'operator', title: 'operator', sort: true, templet: '#simTypeTpl'}
+                , {field: 'iccid', title: 'iccid', sort: true}
+                , {field: 'imei', title: 'imei'}
+                , {field: 'openTime', title: 'openTime', sort: true}
+                , {field: 'expireTime', title: 'expireTime', sort: true}
+                , {field: 'status', title: 'status', templet: '#statusTpl'}
+                , {field: 'expectRenewAt', title: 'expectRenewAt', templet: '#expectRenewAtTpl'}
+                , {field: 'auditStatus', title: 'auditStatus', templet: '#auditStatusTpl'}
+                , {fixed: 'right', title: '操作', align: 'center', width: '8%', toolbar: '#barDemo'}
+            ]]
+        });
+
+        //监听工具条
+        table.on('tool(audit-table)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            let data = obj.data //获得当前行数据
+                , layEvent = obj.event; //获得 lay-event 对应的值
+            if (layEvent === 'detail') {
+                top.editData = {id: data.id};
+                layer.open({
+                    type: 2,
+                    area: ['28rem', '27rem'],
+                    fix: false, //不固定
+                    maxmin: true,
+                    shadeClose: true,
+                    shade: 0.4,
+                    title: 'SIM信息查询',
+                    content: 'sim-info.html'
+                    , btn: ['关闭']
+                    , yes: function (index, layero) {
+                        layer.close(index);
+                    }
+                });
+            } else if (layEvent === 'renew') {
+                openAudit(layer, data, table);
+            }
+        });
+
+        table.on('checkbox(audit-table)', function (obj) {
+            console.log(obj.checked); //当前是否选中状态
+            console.log(obj.data); //选中行的相关数据
+            console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
+        });
+
+        //监听搜索
+        form.on('submit(sim-menu)', function (data) {
+            let field = data.field;
+            let event = $(data.elem).data('event');
+            let fm = data.form;
+            if (event == 'clear') {
+                cleanForm(fm);
+                table.reload('audit-table', {
+                    page: {
+                        curr: 1
+                    },
+                    where: null
+                });
+            } else if (event == 'audit-batch') {// 续费
+                let checkObjs = table.checkStatus('audit-table');
+                let data = checkObjs.data;
+
+                if (data.length == 0) {
+                    layer.msg("请勾选您要审批的项目", {icon: 2});
+                    return false;
+                }
+
+                let ids = '';
+                data.forEach(function (item) {
+                    ids += item.id + ',';
+                });
+                ids = ids.substring(0, ids.length - 1);
+
+                openAudit(layer, {id: ids, num: data.length}, table);
+            } else {
+                if (field.imei) {
+                    field['sIMCardInfo.imei'] = field.imei;
+                }
+                table.reload('audit-table', {
+                    page: {
+                        curr: 1
+                    },
+                    where: field
+                });
+            }
+            return false;
+        });
+    });
+
+    function openAudit(layer, data, table) {
+        top.editData = {};
+        top.editData.ids = data.id;
+        top.editData.simId = data.simId;
+        top.editData.num = data.num;
+        layer.open({
+            type: 2,
+            area: ['25rem', '30rem'],
+            fix: false, //不固定
+            maxmin: true,
+            shadeClose: true,
+            shade: 0.4,
+            title: 'SIM续费',
+            content: 'sim-audit-oper.html'
+            , btn: ['确认续费', '取消']
+            , yes: function (index, layero) {
+                top.editData.submit();
+                top.editData.submitBack = function (res) {
+                    if (res === true) {
+                        table.reload('audit-table');
+                        layer.msg("操作成功", {icon: 6});
+                    } else {
+                        layer.msg("操作失败", {icon: 2});
+                    }
+                    layer.close(index);
+                };
+            }
+            , btn2: function (index, layero) {
+                layer.close(index);
+            }
+        });
+    }
+</script>
+</body>
+</html>

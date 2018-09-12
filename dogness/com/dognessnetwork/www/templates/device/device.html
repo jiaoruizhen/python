@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>layui在线调试</title>
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js?v=2"></script>
+</head>
+<style>
+    body {
+        width: auto;
+        min-height: auto;
+        padding: 1rem;
+    }
+</style>
+<body>
+<form class="layui-form" id="layui-fm">
+    <div class="layui-form-item layui-border-bottom">
+        <div class="layui-inline">
+            <input type="text" id="deviceCode" name="deviceCode" autocomplete="off" class="layui-input" placeholder="输入设备编码">
+        </div>
+        <div class="layui-inline">
+            <select name="type" id="type">
+                <option value="">设备类型</option>
+                <option value="FEEDER">喂食器</option>
+                <option value="ROBOT">机器狗</option>
+                <option value="TAG">协寻吊牌</option>
+                <option value="NECKLACE">项圈</option>
+            </select>
+        </div>
+        <div class="layui-inline">
+            <select name="online" id="online">
+                <option value="">在线状态</option>
+                <option value="true">在线</option>
+                <option value="false">离线</option>
+            </select>
+        </div>
+        <div class="layui-inline">
+            <select name="isBind" id="isBind">
+                <option value="">是否绑定</option>
+                <option value="true">已绑定</option>
+                <option value="false">未绑定</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <button class="layui-btn" lay-submit data-event="clear" lay-filter="dev-menu">
+                <i class="layui-icon layui-icon-delete"></i>清除搜索
+            </button>
+        </div>
+        <div class="layui-inline">
+            <button class="layui-btn" lay-submit lay-filter="dev-menu">
+                <i class="layui-icon layui-icon-search"></i>搜索
+            </button>
+        </div>
+    </div>
+</form>
+
+<table class="layui-hide" id="dev-tab" lay-filter="dev-tab"></table>
+
+<script type="text/html" id="barTool">
+    <a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>
+</script>
+
+
+<!--1奥一移动、2宝安移动-->
+<script type="text/html" id="devTypeTpl">
+    {{#  if(d.type == 'FEEDER'){ }}
+    <span>喂食器</span>
+    {{#  } else if(d.type == 'ROBOT'){ }}
+    <span>机器狗</span>
+    {{#  } else if(d.type == 'TAG'){ }}
+    <span>协寻吊牌</span>
+    {{#  } else if(d.type == 'NECKLACE'){ }}
+    <span>项圈</span>
+    {{#  } else if(d.type == 'DISPENSER'){ }}
+    <span>投食器</span>
+    {{#  }  }}
+</script>
+
+
+<script type="text/html" id="isBindTpl">
+    {{#  if(d.isBind){ }}
+    <span>是</span>
+    {{#  } else { }}
+    <span>否</span>
+    {{#  }  }}
+</script>
+
+<script type="text/html" id="onlineTpl">
+    {{#  if(d.online){ }}
+    <span>在线</span>
+    {{#  } else { }}
+    <span>离线</span>
+    {{#  }  }}
+</script>
+
+<script type="text/html" id="timeTpl">
+    <span>{{timetrans(d.onlineTime)}}</span>
+</script>
+
+<script>
+    layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element'], function () {
+        let laypage = layui.laypage //分页
+            , layer = layui.layer //弹层
+            , form = layui.form
+            , table = layui.table;
+
+        table.render({
+            elem: '#dev-tab'
+            , url: '/device/all' //数据接口
+            , page: true //开启分页
+            , cols: [[ //表头
+                {field: 'id', title: 'ID', sort: true, width: '5%'}
+                , {field: 'devName', title: '设备名', sort: true}
+                , {field: 'type', title: '类型', sort: true, templet: '#devTypeTpl'}
+                , {field: 'online', title: '是否在线', templet: '#onlineTpl'}
+                , {field: 'isBind', title: '是否绑定', sort: true, templet: '#isBindTpl'}
+                , {field: 'deviceCode', title: '设备编码', sort: true}
+                , {field: 'producter', title: '设备生产商'}
+                , {field: 'onlineTime', title: '上线时间', templet: '#timeTpl'}
+                , {field: 'offlineTime', title: '下线时间', templet: '#timeTpl'}
+                , {fixed: 'right', title: '操作', align: 'center', width: '5%', toolbar: '#barTool'}
+            ]]
+        });
+
+        //监听工具条
+        table.on('tool(dev-tab)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            let data = obj.data //获得当前行数据
+                , layEvent = obj.event; //获得 lay-event 对应的值
+            if (layEvent === 'detail') {
+                top.editData = data;
+                layer.open({
+                    type: 2,
+                    area: ['28rem', '40rem'],
+                    fix: false, //不固定
+                    maxmin: true,
+                    shadeClose: true,
+                    shade: 0.4,
+                    title: '设备详情',
+                    content: 'dev-info.html'
+                    , btn: ['关闭']
+                    , yes: function (index, layero) {
+                        layer.close(index);
+                    }
+                });
+            }
+        });
+
+        //监听搜索
+        form.on('submit(dev-menu)', function (data) {
+            let field = data.field;
+            let event = $(data.elem).data('event');
+            let fm = data.form;
+            let reloadObj = {page: {curr: 1}};
+
+            if (event == 'clear') {
+                cleanForm(fm);
+                reloadObj.where = null;
+            } else {
+                reloadObj.where = field;
+            }
+            table.reload('dev-tab', reloadObj);
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>欢迎页面-X-admin2.0</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+   <link rel="shortcut icon" href="/static/images/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    <script type="text/javascript" src="/static/js/token.js"></script></head>
+
+<body>
+	<div class="x-body">
+		<form class="layui-form">
+			<div class="layui-form-item">
+				<label for="username" class="layui-form-label"> <span
+					class="x-red">*</span>用户名
+				</label>
+				<div class="layui-input-inline">
+					<input type="text" id="username" name="username" required=""
+						lay-verify="required" autocomplete="off" class="layui-input">
+				</div>
+				<div class="layui-form-mid layui-word-aux">
+					<span class="x-red">*</span>将会成为您唯一的登入名
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label for="phone" class="layui-form-label"> <span
+					class="x-red">*</span>手机
+				</label>
+				<div class="layui-input-inline">
+					<input type="text" id="phone" name="phone" required=""
+						lay-verify="phone" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label for="L_email" class="layui-form-label"> <span
+					class="x-red">*</span>邮箱
+				</label>
+				<div class="layui-input-inline">
+					<input type="text" id="email" name="email" required=""
+						lay-verify="email" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label for="name" class="layui-form-label"> <span
+					class="x-red">*</span>姓名
+				</label>
+				<div class="layui-input-inline">
+					<input type="text" id="name" name="name" required
+						lay-verify="required" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label"><span class="x-red">*</span>角色</label>
+				<div class="layui-input-block" id='change-role'>
+				</div>
+			</div>
+			<div class="layui-form-item" id="password">
+				<label for="L_pass" class="layui-form-label"> <span
+					class="x-red">*</span>密码
+				</label>
+				<div class="layui-input-inline">
+					<input type="password" id="L_pass" name="password" required=""
+						lay-verify="pass" autocomplete="off" class="layui-input">
+				</div>
+				<div class="layui-form-mid layui-word-aux">6到16个字符</div>
+			</div>
+			<div class="layui-form-item" id="repassword">
+				<label for="L_repass" class="layui-form-label"> <span
+					class="x-red">*</span>确认密码
+				</label>
+				<div class="layui-input-inline">
+					<input type="password" id="L_repass" name="repassword" required=""
+						lay-verify="repass" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label for="
+              L_repass" class="layui-form-label">
+				</label>
+				<button class="layui-btn" lay-filter="add" lay-submit="">
+					提交</button>
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript" src="../js/jquery.min.js"></script>
+	<script type="text/javascript" src="../lib/layui/layui.js"
+		charset="utf-8"></script>
+	<script type="text/javascript" src="../js/xadmin.js"></script>
+	<script>
+    var id='';
+    var role='';
+    //加载数据
+    $(window).on('load',function(){
+    	console.log(GetRequest())
+    	id=GetRequest().id
+    	role=GetRequest().role
+    	if(role==1){
+			$("#username").attr("disabled",true)
+			$("#phone").attr("disabled",true)
+			$("#email").attr("disabled",true)
+			$("#name").attr("disabled",true)
+			$("#password").hide()
+			$("#repassword").hide()
+    	}else{
+    		$("#username").attr("disabled",false)
+			$("#phone").attr("disabled",false)
+			$("#email").attr("disabled",false)
+			$("#name").attr("disabled",false)
+			$("#password").show()
+			$("#repassword").show()
+			$("#role").hide()
+    	}
+    	selsectRoles();
+    	$.ajax({
+						url : '/users/findById',
+						// data:{},
+						type : 'POST',
+						dataType : 'json',
+						data:{'id':id},
+						success : function(res) {
+							if (res.header.status==1000) {
+								$("#username").val(res.data.username)
+								$("#phone").val(res.data.mobile)
+								$("#email").val(res.data.email)
+								$("#name").val(res.data.name)
+							} else {
+								layer.msg(res.header.message, {
+									icon : 2,
+									time : 2000
+								})
+							}
+						}
+					})
+		
+    })
+    //获取请求的参数
+    	function GetRequest() {   
+    	   var url = location.search; //获取url中"?"符后的字串   
+    	   var theRequest = new Object();   
+    	   if (url.indexOf("?") != -1) {   
+    	      var str = url.substr(1);   
+    	      strs = str.split("&");   
+    	      for(var i = 0; i < strs.length; i ++) {   
+    	         theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);   
+    	      }   
+    	   }   
+    	   return theRequest;   
+    	}   
+    //layui 注册模块
+        layui.use(['form','layer'], function(){
+            $ = layui.jquery;
+          var form = layui.form
+          ,layer = layui.layer;
+        
+          //自定义验证规则
+          form.verify({
+        	 username: function(value){
+              if(value.length < 6||value.length>16){
+                return '用户名必须是6-16位字符';
+              }
+            }
+          });
+
+          //监听提交
+          form.on('submit(add)', function(data){
+            console.log(data);
+            //发异步，把数据提交给php
+            var roles='';
+            $("input:checkbox[name='standard']:checked").each(function() { // 遍历name=standard的多选框
+            		roles += $(this).val()+',';
+			});
+            console.log(roles)
+            if(role==1){
+            	addRole(id,roles)
+            }else{
+            	 edit(
+            		  id,
+            		  data.field.username,
+            		  data.field.email,
+            		  data.field.name,
+            		  data.field.password,
+            		  data.field.phone
+            		  );
+            }
+           
+        });
+     })
+     //获取所有的角色
+     function selsectRoles(){
+        	$("#change-role").html('')
+        	 $.ajax({
+        			url : '/roles/findAll',
+        			type : 'POST',
+        			async:false,
+        			dataType : 'json',
+        			success : function(res) {	
+        				if (res.header.status==1000) {
+        					var htm=""
+        					console.log(res)
+        				for(var i=0;i<res.data.length;i++){
+        					htm+='<input type="checkbox" style="display:inline-block" value="'+res.data[i].id+'" name="standard"'
+        					+'" lay-skin="primary" />'+res.data[i].detail+'</br>';
+        				}
+        					$("#change-role").append(htm)
+        				} else {
+        					layer.msg(res.header.message, {
+        						icon : 2,
+        						time : 2000
+        					})
+        				}
+        		}
+        	}); 
+    }
+       //管理员分配用户角色
+       function addRole(id,role){
+    	   $.ajax({
+   			url : '/users/changeRoles',
+   			type : 'POST',
+   			dataType : 'json',
+   			data:{
+   				'id':id,							
+   				'role':role
+   			},
+   			success : function(res) {	
+   				if (res.header.status==1000) {
+   					console.log(res)
+   					layer.msg(res.header.message, {
+   						icon : 1,
+   						time : 4000
+   					})
+   					// 获得frame索引
+   	                var index = parent.layer.getFrameIndex(window.name);
+   	                //关闭当前frame
+   	                parent.layer.close(index);
+   				} else {
+   					layer.msg(res.header.message, {
+   						icon : 2,
+   						time : 2000
+   					})
+   				}
+   		}
+   	}); 
+   }
+   //用户修改个人信息       
+  function edit(id,username,email,name,password,phone){
+      $.ajax({
+			url : '/users/update',
+			// data:{},
+			type : 'POST',
+			dataType : 'json',
+			data:{
+				'id':id,							
+				'username':username,
+				'email':email,
+				'name':name,
+				'password':password,
+				'mobile':phone
+			},
+			success : function(res) {	
+				if (res.header.status==1000) {
+					layer.msg(res.header.message, {
+						icon : 1,
+						time : 4000
+					})
+					// 获得frame索引
+	                var index = parent.layer.getFrameIndex(window.name);
+	                //关闭当前frame
+	                parent.layer.close(index);
+				} else {
+					layer.msg(res.header.message, {
+						icon : 2,
+						time : 2000
+					})
+				}
+		}
+	});
+  }
+    </script>
+</body>
+
+</html>

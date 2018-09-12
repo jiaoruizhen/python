@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>欢迎页面-X-admin2.0</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+   <link rel="shortcut icon" href="/static/images/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    <script type="text/javascript" src="/static/js/token.js"></script>
+</head>
+
+<body>
+	<div class="x-nav">
+		<span class="layui-breadcrumb"> <a href="">首页</a> <a href="">演示</a>
+			<a> <cite>导航元素</cite></a>
+		</span> <a class="layui-btn layui-btn-small"
+			style="line-height: 1.6em; margin-top: 3px; float: right"
+			href="javascript:location.replace(location.href);" title="刷新"> <i
+			class="layui-icon layui-icon-refresh" style="line-height: 30px"></i></a>
+	</div>
+	<div class="x-body">
+		<xblock>
+		<button class="layui-btn"
+			onclick="x_admin_show('添加用户','./role-add.html')">
+			<i class="layui-icon"></i>添加
+		</button>
+		<span class="x-right" style="line-height: 40px"></span> </xblock>
+		<table class="layui-table">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>角色名</th>
+					<th>拥有权限规则</th>
+					<th>状态</th>
+					<th>操作</th>
+			</thead>
+			<tbody id='tbody'>
+
+			</tbody>
+		</table>
+		<div id="page" style="text-align: center"></div>
+
+	</div>
+	<script>
+		$(function() {
+			selectAll(1, true)
+		});
+
+        function buildPage(count) {
+            layui.use('laypage', function(){
+                let laypage = layui.laypage;
+
+                laypage.render({
+                    elem: 'page'
+                    ,count: count
+                    ,limit: 10
+                    ,jump: function(obj, first){
+                        selectAll(obj.curr);
+                    }
+                });
+            });
+        }
+
+		var token = '';
+		function selectAll(page, first) {
+            $('#tbody').html('');
+			$.ajax({
+						url : '/roles/findAll',
+						// data:{},
+						type : 'POST',
+						dataType : 'json',
+						data : {
+							'page' : page
+						},
+						success : function(res) {
+							if (res.header.status == 1000) {
+                                if(first){
+                                    buildPage(res.data.total);
+                                }
+                                $('.x-right').text('共有   '+res.data.total+'  个角色')
+								var htm = '';
+								var list = res.data.list
+								for (var i = 0; i < list.length; i++) {
+									htm += '<tr>'
+											 + '<td>' + list[i].id
+											+ '</td>' + '<td>' + list[i].detail
+											+ '</td>';
+									var text = '';
+									for (var j = 0; j < list[i].resources.length; j++) {
+										text += list[i].resources[j].detail
+												+ '、';
+									}
+									htm += '<td>' + text + '</td>';
+									if (list[i].enable) {
+										htm += '<td class="td-status">\n'
+												+ '<span class="layui-btn layui-btn-normal layui-btn-mini">已启用</span></td>\n'
+										htm += '<td class="td-manage">\n'
+												+ '<button class="layui-btn-warning layui-btn layui-btn-xs" onclick="member_stop(this,'
+												+ list[i].id
+												+ ')" href="javascript:;"  title="禁用">\n'
+												+ '<i class="layui-icon">&#xe62f;禁用</i>\n'
+												+ '</button>\n'
+												+ '<button class="layui-btn-warning layui-btn layui-btn-xs" title="分配权限"  onclick=\"x_admin_show(\'分配角色\',\'role-edit.html?id='
+												+ list[i].id
+												+ '&role=1\')\" href="javascript:;">\n'
+												+ '<i class="layui-icon" >&#xe642;分配权限</i>\n'
+												+ '</button>\n'
+												+ '<button class="layui-btn-danger layui-btn layui-btn-xs" title="删除" onclick="member_del(this,'
+												+ list[i].id
+												+ ')" href="javascript:;">\n'
+												+ '<i class="layui-icon" >&#xe640;删除</i>\n'
+												+ '</button>\n' + '</td>\n'
+												+ '</tr>\n';
+									} else {
+										htm += '<td class="td-status">\n'
+												+ '<span class="layui-btn layui-btn-normal layui-btn-mini  layui-btn-disabled">已禁用</span></td>\n'
+										htm += '<td class="td-manage">'
+												+ '<button class="layui-btn-warning layui-btn layui-btn-xs" onclick="member_stop(this,'
+												+ list[i].id
+												+ ')" href="javascript:;"  title="启用">'
+												+ '<i class="layui-icon">&#xe601;启用</i>'
+												+ '</button>\n'
+												+ '<button title="分配权限" class="layui-btn-warning layui-btn layui-btn-xs" onclick=\"x_admin_show(\'分配权限\',\'role-edit.html?id='
+												+ list[i].id
+												+ '&role=1\')\" href="javascript:;">'
+												+ '<i class="layui-icon" >&#xe642;分配权限</i>\n'
+												+ '</button>\n'
+												+ '<button title="删除"  class="layui-btn-danger layui-btn layui-btn-xs" onclick="member_del(this,'
+												+ list[i].id
+												+ ')" href="javascript:;">'
+												+ '<i class="layui-icon" >&#xe640;删除</i>\n'
+												+ '</button>' + '</td>' + '</tr>';
+									}
+								}
+								$('#tbody').append(htm)
+							} else {
+								layer.msg(res.header.message, {
+									icon : 2,
+									time : 2000
+								})
+							}
+							}
+					})
+		}
+		layui.use('laydate', function() {
+			var laydate = layui.laydate;
+
+		});
+		
+		/*用户-停用*/
+		function member_stop(obj, id) {
+			
+				var status=0;
+				if ($(obj).attr('title') == '禁用') {
+					layer.confirm('确认要禁用吗？', function(index) {
+					status=0;
+					//发异步把用户状态进行更改
+					$.ajax({
+						url : '/roles/update',
+						// data:{},
+						type : 'POST',
+						dataType : 'json',
+						data:{'id':id,'enable':status},
+						success : function(res) {
+							console.log(res)
+							if (res.header.status==1000) {
+								$(obj).attr('title', '启用')
+								$(obj).find('i').html('&#xe62f;启用');
+
+								$(obj).parents("tr").find(".td-status").find('span')
+										.addClass('layui-btn-disabled').html('已禁用');
+								layer.msg('已禁用!', {
+									icon : 5,
+									time : 1000
+								});
+							} else {
+								layer.msg(res.header.message, {
+									icon : 2,
+									time : 2000
+								})
+							}
+						}
+					})
+					});
+				} else {
+					layer.confirm('确认启用吗？', function(index) {
+					status=1;
+					//发异步把用户状态进行更改
+					$.ajax({
+						url : '/roles/update',
+						// data:{},
+						type : 'POST',
+						dataType : 'json',
+						data:{'id':id,'enable':status},
+						success : function(res) {
+							console.log(res)
+							if (res.header.status==1000) {
+								$(obj).attr('title', '禁用')
+								$(obj).find('i').html('&#xe601;禁用');
+
+								$(obj).parents("tr").find(".td-status").find('span')
+										.removeClass('layui-btn-disabled').html('已启用');
+								layer.msg('已启用!', {
+									icon : 6,
+									time : 1000
+								});
+
+							} else {
+								layer.msg(res.header.message, {
+									icon : 2,
+									time : 2000
+								})
+							}
+						}
+					})
+					});
+				}
+				
+				
+			
+		}
+
+		/*用户-删除*/
+		function member_del(obj, id) {
+			layer.confirm('确认要删除吗？', function(index) {
+				//发异步删除数据
+				$.ajax({
+					url : '/roles/delete',
+					// data:{},
+					type : 'POST',
+					dataType : 'json',
+					data : {"id" : id},
+					success : function(res) {
+						if (res.header.status == 1000) {
+							$(obj).parents("tr").remove();
+							layer.msg('已删除!', {
+								icon : 1,
+								time : 1000
+							});
+						} else {
+							layer.msg(res.header.message, {
+								icon : 2,
+								time : 2000
+							})
+						}
+					}
+				})
+			});
+		}
+
+		function delAll(argument) {
+
+			var data = tableCheck.getData();
+			console.log(data)
+			layer.confirm('确认要删除吗？' + data, function(index) {
+				//捉到所有被选中的，发异步进行删除
+				
+				layer.msg('删除成功', {
+					icon : 1
+				});
+				$(".layui-form-checked").not('.header').parents('tr').remove();
+			});
+		}
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+h1
+    {
+        background-color: antiquewhite;
+        color: aqua;
+        text-align: center;
+        font-size: 40px;
+        font-family: "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+    }
+p
+    {
+        background-color: blue;
+        text-indent: 50px;
+        font-family: Times, "Times New Roman", serif;
+    }
+div
+    {
+        background-color: #ffe3f1;
+    }
+
+    ul.a {list-style-type: square;}
+    ul.b {list-style-type: upper-roman;
+    color: chartreuse;}
+li.book {list-style-image: url("http://img.sccnn.com//simg/339/28714.jpg");
+    list-style-position: inside;}
+li.computer {list-style-image: url("http://img.sccnn.com//simg/338/44183.jpg");
+    list-style-position: inside}
+
+ p.ex{
+        color: chocolate;
+    }

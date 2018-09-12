@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .layui-form-switch {
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+<div class="x-body">
+    <form class="layui-form" lay-filter="layui-form">
+        <div id="sim-info" style="display: none">
+            <div class="layui-form-item">
+                <label for="id" class="layui-form-label">
+                    <span class="x-red">*</span>id:
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="id" name="id" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="iccid" class="layui-form-label">
+                    <span class="x-red">*</span>iccid:
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="iccid" name="iccid" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="openTime" class="layui-form-label">
+                    <span class="x-red">*</span>openTime:
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="openTime" name="openTime" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="statusTime" class="layui-form-label">
+                    <span class="x-red">*</span>statusTime:
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="statusTime" name="statusTime" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="expectRenewAt" class="layui-form-label">
+                    <span class="x-red">*</span>预计续费至:
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="expectRenewAt" name="expectRenewAt" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="renewalOper" class="layui-form-label">
+                    <span class="x-red">*</span>续费提交人:
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="renewalOper" name="renewalOper" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+
+
+        <div id="audit-batch" style="display: none">
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="x-red">*</span>审批数量:
+                </label>
+                <label class="layui-form-label" id="audit-batch-info" style="text-align: left">
+
+                </label>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="auditStatus" class="layui-form-label">
+                <span class="x-red">*</span>审核状态:
+            </label>
+            <div class="layui-input-inline">
+                <select name="auditStatus" id="auditStatus">
+                    <option value=""></option>
+                    <option value="1">审核通过</option>
+                    <option value="0">驳回</option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form', 'layer'], function () {
+        let fm = layui.form
+            , layer = layui.layer;
+
+        let obj = top.editData;
+        if (!isNaN(obj.simId)) {
+            $.ajax({
+                url: config.urlBase + "/sim/getById",
+                data: {id: obj.simId},
+                dataType: "json",
+                success: function (res) {
+                    fm.val('layui-form', res);
+                    $('#sim-info').show();
+                },
+                error: function () {
+                }
+            });
+        }else{
+            $('#audit-batch-info').html(obj.num);
+            $('#audit-batch').show();
+        }
+
+        top.editData.submit = function () {
+            $.ajax({
+                type: 'post',
+                url: config.urlBase + "/sim/audit/oper",
+                data: {id: obj.ids, auditStatus: $('#auditStatus').val()},
+                dataType: "json",
+                success: function (res) {
+                    top.editData.submitBack(res);
+                },
+                error: function () {
+                }
+            });
+        };
+    });
+</script>
+</body>
+
+</html>

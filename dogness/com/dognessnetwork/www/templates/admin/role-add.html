@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+      <link rel="shortcut icon" href="/static/images/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    <script type="text/javascript" src="/static/js/token.js"></script>
+  </head>
+  
+  <body>
+    <div class="x-body">
+        <form action="" method="post" class="layui-form layui-form-pane">
+                <div class="layui-form-item">
+                    <label for="name" class="layui-form-label">
+                        <span class="x-red">*</span>角色名
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="name" name="name" required="" lay-verify="required"
+                        autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="name" class="layui-form-label">
+                        <span class="x-red">*</span>角色描述
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="detail" name="detail" required="" lay-verify="required"
+                        autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">
+                        拥有权限
+                    </label>
+                    <table  class="layui-table layui-input-block">
+                        <tbody id='tbody'>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="layui-form-item">
+                <button class="layui-btn" lay-submit="" lay-filter="add">增加</button>
+              </div>
+            </form>
+    </div>
+    <script>
+    $(window).on('load',function(){
+    	selectAllResources()
+    })
+    
+  	function selectAllResources(){
+  		$('#tbody').empty()
+  		$.ajax({
+			url : '/resources/findAll',
+			// data:{},
+			type : 'POST',
+			dataType : 'json',
+			success : function(res) {
+				if (res.header.status==1000) {
+					var htm='';
+					htm+='<tr>'
+                   +'     <td>'
+                   +' 用户管理'
+                   +' </td>'
+                   +' <td>'
+                   +' <div class="layui-input-block">'
+                   for(var i=0;i<res.data.length;i++){
+                	   htm+= '<input name="standard" style="display:inline-block" value="'+res.data[i].id+'"lay-skin="primary" type="checkbox" title="'+res.data[i].detail+'" value="2"> '
+                	   		+res.data[i].detail+'</br>'
+                   }
+                   htm+=' </div></td></tr>';
+                   $('#tbody').append(htm);
+				} else {
+					layer.msg(res.header.message, {
+						icon : 2,
+						time : 2000
+					})
+				}
+			}
+		})
+  	}  
+    
+    
+        layui.use(['form','layer'], function(){
+            $ = layui.jquery;
+          var form = layui.form
+          ,layer = layui.layer;
+        
+
+          //监听提交
+          form.on('submit(add)', function(data){
+            console.log(data.field);
+             var resources='';
+            $("input:checkbox[name='standard']:checked").each(function() { // 遍历name=standard的多选框
+            	resources += $(this).val()+',';
+			});
+            console.log(resources);
+            $.ajax({
+				url : '/roles/add',
+				// data:{},
+				type : 'POST',
+				dataType : 'json',
+				data:{'name':data.field.name,'detail':data.field.detail,'resource':resources},
+				success : function(res) {
+					if (res.header.status==1000) {
+						layer.alert("添加成功", {icon: 6},function () {
+			                // 获得frame索引
+			                var index = parent.layer.getFrameIndex(window.name);
+			                //关闭当前frame
+			                parent.layer.close(index);
+			            });
+					} else {
+						layer.msg(res.header.message, {
+							icon : 5,
+							time : 2000
+						})
+					}
+				}
+			})
+            return false;
+          });
+          
+          
+        });
+    </script>
+  </body>
+
+</html>
